@@ -127,30 +127,36 @@ class _PantallaInicioState extends State<PantallaInicio> {
                   const SizedBox(height: 12),
                   SizedBox(
                     height: 40,
-                    child: ListView.separated(
+                    child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: _categorias.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (context, index) {
                         final categoria = _categorias[index];
                         final seleccionada =
                             categoria == _categoriaSeleccionada;
-                        return ElevatedButton(
-                          onPressed: () {
-                            setState(() => _categoriaSeleccionada = categoria);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: seleccionada
-                                ? _verde
-                                : const Color(0xFFE7E6DC),
-                            foregroundColor: seleccionada
-                                ? Colors.white
-                                : _verde,
-                            elevation: seleccionada ? 2 : 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            shape: const StadiumBorder(),
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(
+                                () => _categoriaSeleccionada = categoria,
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: seleccionada
+                                  ? _verde
+                                  : const Color(0xFFE7E6DC),
+                              foregroundColor: seleccionada
+                                  ? Colors.white
+                                  : _verde,
+                              elevation: seleccionada ? 2 : 0,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                              ),
+                              shape: const StadiumBorder(),
+                            ),
+                            child: Text(categoria),
                           ),
-                          child: Text(categoria),
                         );
                       },
                     ),
