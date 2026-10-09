@@ -81,5 +81,20 @@ void main() {
 
     expect(find.text('Agregaste 1 producto · \$3.200'), findsOneWidget);
     expect(find.byKey(const Key('cantidad-Tomate chonto')), findsOneWidget);
+
+    await tester.tap(botonAgregar);
+    await tester.pumpAndSettle();
+    expect(find.text('Agregaste 2 productos · \$6.400'), findsOneWidget);
+
+    final botonQuitar = find.byTooltip('Quitar Tomate chonto');
+    await tester.tap(botonQuitar);
+    await tester.pumpAndSettle();
+    expect(find.text('Agregaste 1 producto · \$3.200'), findsOneWidget);
+
+    await tester.tap(botonQuitar);
+    await tester.pumpAndSettle();
+    expect(find.text('Agregaste 1 producto · \$3.200'), findsNothing);
+    expect(find.byKey(const Key('cantidad-Tomate chonto')), findsNothing);
+    expect(botonQuitar, findsNothing);
   });
 }

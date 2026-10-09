@@ -73,6 +73,19 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
     });
   }
 
+  void _quitarProducto(int indice) {
+    setState(() {
+      final cantidad = _cantidades[indice];
+      if (cantidad == null) return;
+
+      if (cantidad == 1) {
+        _cantidades.remove(indice);
+      } else {
+        _cantidades[indice] = cantidad - 1;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,6 +203,7 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
                         producto: _productos[i],
                         cantidad: _cantidades[i] ?? 0,
                         alAgregar: () => _agregarProducto(i),
+                        alQuitar: () => _quitarProducto(i),
                         precioFormateado: _formatearPesos(_productos[i].precio),
                       ),
                     if (_cantidadTotal > 0) ...[
@@ -340,12 +354,14 @@ class _TarjetaProducto extends StatelessWidget {
     required this.producto,
     required this.cantidad,
     required this.alAgregar,
+    required this.alQuitar,
     required this.precioFormateado,
   });
 
   final _ProductoMercado producto;
   final int cantidad;
   final VoidCallback alAgregar;
+  final VoidCallback alQuitar;
   final String precioFormateado;
 
   @override
@@ -392,10 +408,25 @@ class _TarjetaProducto extends StatelessWidget {
                 ],
               ),
             ),
-            if (cantidad > 0) ...[
-              Text('$cantidad', key: Key('cantidad-${producto.nombre}')),
-              const SizedBox(width: 8),
-            ],
+            if (cantidad > 0)
+              IconButton.filledTonal(
+                onPressed: alQuitar,
+                tooltip: 'Quitar ${producto.nombre}',
+                style: IconButton.styleFrom(
+                  minimumSize: const Size(36, 40),
+                  maximumSize: const Size(36, 40),
+                  padding: EdgeInsets.zero,
+                ),
+                icon: const Icon(Icons.remove, size: 18),
+              ),
+            if (cantidad > 0)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  '$cantidad',
+                  key: Key('cantidad-${producto.nombre}'),
+                ),
+              ),
             IconButton.filled(
               onPressed: alAgregar,
               tooltip: 'Agregar ${producto.nombre}',
