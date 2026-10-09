@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'detalle_productor.dart';
 import '../modelos/productor.dart';
 
 class PantallaInicio extends StatefulWidget {
@@ -112,7 +113,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
                   TextField(
                     onChanged: (value) => setState(() => _busqueda = value),
                     decoration: InputDecoration(
-                      hintText: 'Buscar productor o producto',
+                      hintText: 'Buscar productor o vereda',
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: const Color(0xFFF0EDE3),
@@ -134,19 +135,22 @@ class _PantallaInicioState extends State<PantallaInicio> {
                         final categoria = _categorias[index];
                         final seleccionada =
                             categoria == _categoriaSeleccionada;
-                        return ChoiceChip(
-                          label: Text(categoria),
-                          selected: seleccionada,
-                          onSelected: (_) {
+                        return ElevatedButton(
+                          onPressed: () {
                             setState(() => _categoriaSeleccionada = categoria);
                           },
-                          selectedColor: _verde,
-                          backgroundColor: const Color(0xFFE7E6DC),
-                          labelStyle: TextStyle(
-                            color: seleccionada ? Colors.white : _verde,
-                            fontWeight: FontWeight.w600,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: seleccionada
+                                ? _verde
+                                : const Color(0xFFE7E6DC),
+                            foregroundColor: seleccionada
+                                ? Colors.white
+                                : _verde,
+                            elevation: seleccionada ? 2 : 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            shape: const StadiumBorder(),
                           ),
-                          side: BorderSide.none,
+                          child: Text(categoria),
                         );
                       },
                     ),
@@ -191,10 +195,21 @@ class _PantallaInicioState extends State<PantallaInicio> {
                         final productor = productores[index];
                         return _TarjetaProductor(
                           productor: productor,
-                          onTap: widget.onSeleccionarProductor == null
-                              ? null
-                              : () =>
-                                    widget.onSeleccionarProductor!(productor),
+                          onTap: () {
+                            if (widget.onSeleccionarProductor != null) {
+                              widget.onSeleccionarProductor!(productor);
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (context) =>
+                                      PantallaDetalleProductor(
+                                        productor: productor,
+                                      ),
+                                ),
+                              );
+                            }
+                          },
                         );
                       },
                     ),

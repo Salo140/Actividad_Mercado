@@ -74,6 +74,14 @@ void main() {
     expect(find.text('Vereda El Retiro · 3.2 km'), findsOneWidget);
     expect(find.text('4 productos'), findsOneWidget);
 
+    await tester.tap(find.byTooltip('Agregar a favoritos'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Quitar de favoritos'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Quitar de favoritos'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Agregar a favoritos'), findsOneWidget);
+
     final botonAgregar = find.byTooltip('Agregar Tomate chonto');
     await tester.ensureVisible(botonAgregar);
     await tester.tap(botonAgregar);
@@ -98,7 +106,7 @@ void main() {
     expect(botonQuitar, findsNothing);
   });
 
-  testWidgets('Ver carrito muestra el contenido y el total actualizado', (
+  testWidgets('Ver carrito despliega el resumen sin abrir otra pantalla', (
     tester,
   ) async {
     const productor = Productor(
@@ -118,17 +126,33 @@ void main() {
     await tester.tap(botonCarrito);
     await tester.pumpAndSettle();
 
+    expect(find.byKey(const Key('resumen-carrito')), findsOneWidget);
     expect(find.text('Todavía no agregas productos.'), findsOneWidget);
-    await tester.tap(find.byTooltip('Cerrar carrito'));
+
+    await tester.tap(find.text('Ocultar carrito'));
     await tester.pumpAndSettle();
+    expect(find.byKey(const Key('resumen-carrito')), findsNothing);
 
     await tester.tap(find.byTooltip('Agregar Tomate chonto'));
     await tester.pumpAndSettle();
     await tester.tap(botonCarrito);
     await tester.pumpAndSettle();
 
-    expect(find.text('Carrito de Finca La Esperanza'), findsOneWidget);
     expect(find.text('1 × Tomate chonto'), findsOneWidget);
-    expect(find.text('\$3.200'), findsNWidgets(3));
+    expect(find.text('Resumen del carrito'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('resumen-carrito')),
+        matching: find.text('1 × Tomate chonto'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('resumen-carrito')),
+        matching: find.text('\$3.200'),
+      ),
+      findsNWidgets(2),
+    );
   });
 }

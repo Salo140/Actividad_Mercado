@@ -51,126 +51,57 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
     ),
   ];
 
-  final Map<int, int> _cantidades = {};
+  final List<int> _cantidades = List.filled(_productos.length, 0);
 
-  int get _cantidadTotal =>
-      _cantidades.values.fold(0, (total, cantidad) => total + cantidad);
+  bool _esFavorito = false;
+  bool _carritoVisible = false;
 
-  int get _precioTotal => _cantidades.entries.fold(0, (total, entrada) {
-    return total + _productos[entrada.key].precio * entrada.value;
-  });
+  int get _cantidadTotal {
+    var total = 0;
+    for (final cantidad in _cantidades) {
+      total += cantidad;
+    }
+    return total;
+  }
+
+  int get _precioTotal {
+    var total = 0;
+    for (var i = 0; i < _productos.length; i++) {
+      total += _productos[i].precio * _cantidades[i];
+    }
+    return total;
+  }
 
   String _formatearPesos(int valor) {
-    return valor.toString().replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-      (_) => '.',
-    );
+    final digitos = valor.toString();
+    var resultado = '';
+    for (var i = 0; i < digitos.length; i++) {
+      if (i > 0 && (digitos.length - i) % 3 == 0) {
+        resultado += '.';
+      }
+      resultado += digitos[i];
+    }
+    return resultado;
   }
 
   void _agregarProducto(int indice) {
     setState(() {
-      _cantidades.update(indice, (cantidad) => cantidad + 1, ifAbsent: () => 1);
+      _cantidades[indice]++;
     });
   }
 
   void _quitarProducto(int indice) {
     setState(() {
-      final cantidad = _cantidades[indice];
-      if (cantidad == null) return;
-
-      if (cantidad == 1) {
-        _cantidades.remove(indice);
-      } else {
-        _cantidades[indice] = cantidad - 1;
+      if (_cantidades[indice] > 0) {
+        _cantidades[indice]--;
       }
     });
   }
 
-  Future<void> _mostrarCarrito() async {
-    final productosAgregados = _cantidades.entries
-        .where((entrada) => entrada.value > 0)
-        .toList();
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: _fondo,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) => SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Carrito de ${widget.productor.nombre}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    tooltip: 'Cerrar carrito',
-                    icon: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              if (productosAgregados.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Center(child: Text('Todavía no agregas productos.')),
-                )
-              else
-                ...productosAgregados.map((entrada) {
-                  final producto = _productos[entrada.key];
-                  final subtotal = producto.precio * entrada.value;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${entrada.value} × ${producto.nombre}',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        Text('\$${_formatearPesos(subtotal)}'),
-                      ],
-                    ),
-                  );
-                }),
-              const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Total',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    '\$${_formatearPesos(_precioTotal)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: _verde,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  void _cambiarFavorito() {
+    setState(() {
+      _esFavorito = !_esFavorito;
+    });
   }
 
   @override
@@ -185,7 +116,11 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
             height: 56,
             child: ElevatedButton(
               key: const Key('boton-ver-carrito'),
-              onPressed: _mostrarCarrito,
+              onPressed: () {
+                setState(() {
+                  _carritoVisible = !_carritoVisible;
+                });
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _verde,
                 foregroundColor: Colors.white,
@@ -209,9 +144,9 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Text(
-                    'Ver carrito',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  Text(
+                    _carritoVisible ? 'Ocultar carrito' : 'Ver carrito',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
                   Text(
@@ -229,7 +164,11 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _EncabezadoProductor(onVolver: widget.onVolver),
+              _EncabezadoProductor(
+                onVolver: widget.onVolver ?? () => Navigator.pop(context),
+                esFavorito: _esFavorito,
+                onCambiarFavorito: _cambiarFavorito,
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
                 child: Column(
@@ -335,11 +274,74 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
                     for (var i = 0; i < _productos.length; i++)
                       _TarjetaProducto(
                         producto: _productos[i],
-                        cantidad: _cantidades[i] ?? 0,
+                        cantidad: _cantidades[i],
                         alAgregar: () => _agregarProducto(i),
                         alQuitar: () => _quitarProducto(i),
                         precioFormateado: _formatearPesos(_productos[i].precio),
                       ),
+                    if (_carritoVisible) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        key: const Key('resumen-carrito'),
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE7E6DC)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Resumen del carrito',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            if (_cantidadTotal == 0)
+                              const Text('Todavía no agregas productos.'),
+                            for (var i = 0; i < _productos.length; i++)
+                              if (_cantidades[i] > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          '${_cantidades[i]} × '
+                                          '${_productos[i].nombre}',
+                                        ),
+                                      ),
+                                      Text(
+                                        '\$${_formatearPesos(_productos[i].precio * _cantidades[i])}',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            const Divider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Total',
+                                  style: TextStyle(fontWeight: FontWeight.w700),
+                                ),
+                                Text(
+                                  '\$${_formatearPesos(_precioTotal)}',
+                                  style: const TextStyle(
+                                    color: _verde,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     if (_cantidadTotal > 0) ...[
                       const SizedBox(height: 8),
                       Text(
@@ -365,9 +367,15 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
 }
 
 class _EncabezadoProductor extends StatelessWidget {
-  const _EncabezadoProductor({this.onVolver});
+  const _EncabezadoProductor({
+    required this.onVolver,
+    required this.esFavorito,
+    required this.onCambiarFavorito,
+  });
 
-  final VoidCallback? onVolver;
+  final VoidCallback onVolver;
+  final bool esFavorito;
+  final VoidCallback onCambiarFavorito;
 
   @override
   Widget build(BuildContext context) {
@@ -399,12 +407,15 @@ class _EncabezadoProductor extends StatelessWidget {
               onPressed: onVolver,
             ),
           ),
-          const Positioned(
+          Positioned(
             right: 16,
             top: 14,
             child: _BotonEncabezado(
-              icono: Icons.favorite_border,
-              etiqueta: 'Favorito',
+              icono: esFavorito ? Icons.favorite : Icons.favorite_border,
+              etiqueta: esFavorito
+                  ? 'Quitar de favoritos'
+                  : 'Agregar a favoritos',
+              onPressed: onCambiarFavorito,
             ),
           ),
         ],
@@ -417,12 +428,12 @@ class _BotonEncabezado extends StatelessWidget {
   const _BotonEncabezado({
     required this.icono,
     required this.etiqueta,
-    this.onPressed,
+    required this.onPressed,
   });
 
   final IconData icono;
   final String etiqueta;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -430,7 +441,7 @@ class _BotonEncabezado extends StatelessWidget {
       color: const Color(0xFFF8F7F1),
       borderRadius: BorderRadius.circular(12),
       child: IconButton(
-        onPressed: onPressed ?? () => Navigator.of(context).maybePop(),
+        onPressed: onPressed,
         tooltip: etiqueta,
         icon: Icon(icono, size: 20),
       ),
