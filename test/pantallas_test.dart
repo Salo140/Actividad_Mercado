@@ -6,6 +6,30 @@ import 'package:navegacion_mercado/pantallas/detalle_productor.dart';
 import 'package:navegacion_mercado/pantallas/inicio.dart';
 
 void main() {
+  testWidgets('El diseño conserva ancho móvil en pantalla grande y pequeña', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const app.MercadoApp());
+
+    expect(
+      tester.getSize(find.byKey(const Key('marco-aplicacion-movil'))).width,
+      420,
+    );
+
+    tester.view.physicalSize = const Size(390, 844);
+    await tester.pump();
+
+    expect(
+      tester.getSize(find.byKey(const Key('marco-aplicacion-movil'))).width,
+      390,
+    );
+  });
+
   testWidgets('La app abre Inicio y permite abrir y cerrar el detalle', (
     tester,
   ) async {

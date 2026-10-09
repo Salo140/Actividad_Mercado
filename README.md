@@ -45,6 +45,7 @@ Las búsquedas, filtros, favoritos, cantidades y el resumen del carrito son acci
 - Detalle permite marcar el productor como favorito y agregar o quitar unidades de cada producto.
 - Las pantallas secundarias regresan con `Navigator.pop`; así se conserva la pila y el botón Atrás del sistema tiene el mismo resultado.
 - El botón "Ver carrito" muestra u oculta un resumen dentro del detalle con cantidades, subtotales y total. No se crea una pantalla Carrito adicional ni se modifica la pila.
+- La interfaz usa todo el ancho disponible en teléfonos y limita el contenido a 420 píxeles en ventanas más anchas para conservar una presentación móvil durante las pruebas en navegador.
 - Los datos serán fijos en el código. No se usarán API, base de datos ni validación de campos en esta actividad.
 - La navegación usa `Navigator.push`, `MaterialPageRoute`, datos por constructor y `Navigator.pop`, que son los patrones de navegación explicados en la guía. No se agregaron rutas con nombre, argumentos de ruta ni navegación anidada.
 
