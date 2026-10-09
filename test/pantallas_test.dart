@@ -97,4 +97,38 @@ void main() {
     expect(find.byKey(const Key('cantidad-Tomate chonto')), findsNothing);
     expect(botonQuitar, findsNothing);
   });
+
+  testWidgets('Ver carrito muestra el contenido y el total actualizado', (
+    tester,
+  ) async {
+    const productor = Productor(
+      nombre: 'Finca La Esperanza',
+      vereda: 'El Retiro',
+      distancia: '3.2 km',
+      categoria: 'Verduras',
+      productosDisponibles: 7,
+    );
+
+    await tester.pumpWidget(
+      const MaterialApp(home: PantallaDetalleProductor(productor: productor)),
+    );
+
+    final botonCarrito = find.byKey(const Key('boton-ver-carrito'));
+    expect(find.text('\$0'), findsOneWidget);
+    await tester.tap(botonCarrito);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Todavía no agregas productos.'), findsOneWidget);
+    await tester.tap(find.byTooltip('Cerrar carrito'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Agregar Tomate chonto'));
+    await tester.pumpAndSettle();
+    await tester.tap(botonCarrito);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Carrito de Finca La Esperanza'), findsOneWidget);
+    expect(find.text('1 × Tomate chonto'), findsOneWidget);
+    expect(find.text('\$3.200'), findsNWidgets(3));
+  });
 }

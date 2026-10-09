@@ -29,11 +29,12 @@ Inicio de sesión
 - El correo se envía desde Inicio de sesión a Inicio para mostrar un saludo personalizado.
 - La tarjeta seleccionada envía el productor completo a Detalle de productor, para mostrar sus datos y sus cuatro productos sin volver a buscarlo.
 - Las pantallas secundarias regresan con `Navigator.pop`; así se conserva la pila y el botón Atrás del sistema tiene el mismo resultado.
+- El botón opcional "Ver carrito" abre un resumen temporal con productos y total. No navega a otra pantalla ni modifica la pila porque el carrito no forma parte de las pantallas elegidas.
 - Los datos serán fijos en el código. No se usarán API, base de datos ni validación de campos en esta actividad.
 
 ## Cambios respecto al diseño
 
-No hay cambios respecto al diseño inicial.
+- Se añadió el resumen temporal del carrito desde Detalle de productor para incluir el botón de la referencia. Como no se eligió la pantalla Carrito, el resumen se muestra sin agregar un nuevo salto de navegación.
 
 ## Ayudas usadas
 
