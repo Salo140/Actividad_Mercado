@@ -28,17 +28,8 @@ void main() {
   testWidgets('Inicio muestra cinco productores y filtra la lista', (
     tester,
   ) async {
-    Productor? productorSeleccionado;
-
     await tester.pumpWidget(
-      MaterialApp(
-        home: PantallaInicio(
-          correo: 'camila@ejemplo.com',
-          onSeleccionarProductor: (productor) {
-            productorSeleccionado = productor;
-          },
-        ),
-      ),
+      MaterialApp(home: const PantallaInicio(correo: 'camila@ejemplo.com')),
     );
 
     expect(find.text('Hola, Camila'), findsOneWidget);
@@ -52,7 +43,8 @@ void main() {
     expect(find.text('Finca La Esperanza'), findsNothing);
 
     await tester.tap(find.text('Huerta Doña Rosa'));
-    expect(productorSeleccionado?.vereda, 'La Ceja');
+    await tester.pumpAndSettle();
+    expect(find.text('Vereda La Ceja · 5.1 km'), findsOneWidget);
   });
 
   testWidgets('Detalle muestra productor y cuatro productos agregables', (

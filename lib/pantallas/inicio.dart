@@ -7,11 +7,9 @@ class PantallaInicio extends StatefulWidget {
   const PantallaInicio({
     super.key,
     this.correo = 'camila@ejemplo.com',
-    this.onSeleccionarProductor,
   });
 
   final String correo;
-  final ValueChanged<Productor>? onSeleccionarProductor;
 
   @override
   State<PantallaInicio> createState() => _PantallaInicioState();
@@ -201,21 +199,14 @@ class _PantallaInicioState extends State<PantallaInicio> {
                         final productor = productores[index];
                         return _TarjetaProductor(
                           productor: productor,
-                          onTap: () {
-                            if (widget.onSeleccionarProductor != null) {
-                              widget.onSeleccionarProductor!(productor);
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (context) =>
-                                      PantallaDetalleProductor(
-                                        productor: productor,
-                                      ),
-                                ),
-                              );
-                            }
-                          },
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PantallaDetalleProductor(
+                                productor: productor,
+                              ),
+                            ),
+                          ),
                         );
                       },
                     ),
