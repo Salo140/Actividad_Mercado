@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:navegacion_mercado/modelos/productor.dart';
+import 'package:navegacion_mercado/main.dart' as app;
 import 'package:navegacion_mercado/pantallas/detalle_productor.dart';
 import 'package:navegacion_mercado/pantallas/inicio.dart';
 
 void main() {
+  testWidgets('La app abre Inicio y permite abrir y cerrar el detalle', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const app.MercadoApp());
+
+    expect(find.text('Productores cercanos'), findsOneWidget);
+
+    await tester.tap(find.text('Finca La Esperanza'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Disponible esta semana'), findsOneWidget);
+    expect(find.text('Tomate chonto'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Volver'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Productores cercanos'), findsOneWidget);
+  });
+
   testWidgets('Inicio muestra cinco productores y filtra la lista', (
     tester,
   ) async {

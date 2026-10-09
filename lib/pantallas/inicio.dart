@@ -155,16 +155,26 @@ class _PantallaInicioState extends State<PantallaInicio> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Productores cercanos',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                      const Expanded(
+                        child: Text(
+                          'Productores cercanos',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                      Text(
-                        '${productores.length} resultados',
-                        style: const TextStyle(color: Color(0xFF79796F)),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          '${productores.length} resultados',
+                          textAlign: TextAlign.end,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(color: Color(0xFF79796F)),
+                        ),
                       ),
                     ],
                   ),

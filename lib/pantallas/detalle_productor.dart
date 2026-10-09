@@ -158,18 +158,28 @@ class _PantallaDetalleProductorState extends State<PantallaDetalleProductor> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Disponible esta semana',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
+                        const Expanded(
+                          child: Text(
+                            'Disponible esta semana',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                        Text(
-                          '${_productos.length} productos',
-                          style: const TextStyle(
-                            color: Color(0xFF79796F),
-                            fontSize: 12,
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            '${_productos.length} productos',
+                            textAlign: TextAlign.end,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF79796F),
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ],
@@ -272,7 +282,7 @@ class _BotonEncabezado extends StatelessWidget {
       color: const Color(0xFFF8F7F1),
       borderRadius: BorderRadius.circular(12),
       child: IconButton(
-        onPressed: onPressed,
+        onPressed: onPressed ?? () => Navigator.of(context).maybePop(),
         tooltip: etiqueta,
         icon: Icon(icono, size: 20),
       ),
