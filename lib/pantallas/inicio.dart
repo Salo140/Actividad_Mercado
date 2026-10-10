@@ -4,10 +4,7 @@ import 'detalle_productor.dart';
 import '../modelos/productor.dart';
 
 class PantallaInicio extends StatefulWidget {
-  const PantallaInicio({
-    super.key,
-    this.correo = 'camila@ejemplo.com',
-  });
+  const PantallaInicio({super.key, this.correo = 'camila@ejemplo.com'});
 
   final String correo;
 
@@ -74,7 +71,7 @@ class _PantallaInicioState extends State<PantallaInicio> {
 
   String get _nombreComprador {
     final nombre = widget.correo.split('@').first;
-    if (nombre.isEmpty) return 'Hola';
+    if (nombre.isEmpty) return 'visitante';
     return nombre[0].toUpperCase() + nombre.substring(1);
   }
 

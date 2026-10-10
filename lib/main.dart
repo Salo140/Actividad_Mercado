@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'pantallas/inicio.dart';
+import 'pantallas/inicio_sesion.dart';
 
 void main() => runApp(const MercadoApp());
 
@@ -31,7 +31,7 @@ class MercadoApp extends StatelessWidget {
           );
         },
       ),
-      home: const PantallaInicio(correo: 'camila@ejemplo.com'),
+      home: const PantallaInicioSesion(),
     );
   }
 }

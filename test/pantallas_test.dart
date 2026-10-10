@@ -4,8 +4,54 @@ import 'package:navegacion_mercado/modelos/productor.dart';
 import 'package:navegacion_mercado/main.dart' as app;
 import 'package:navegacion_mercado/pantallas/detalle_productor.dart';
 import 'package:navegacion_mercado/pantallas/inicio.dart';
+import 'package:navegacion_mercado/pantallas/inicio_sesion.dart';
 
 void main() {
+  testWidgets('Login envía el correo y permite recorrer la pila de pantallas', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const app.MercadoApp());
+
+    expect(find.byType(PantallaInicioSesion), findsOneWidget);
+    expect(find.byKey(const Key('campo-correo')), findsOneWidget);
+    expect(find.byKey(const Key('campo-contrasena')), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const Key('campo-correo')),
+      'salome@ejemplo.com',
+    );
+    await tester.enterText(
+      find.byKey(const Key('campo-contrasena')),
+      'clave-demo',
+    );
+    await tester.tap(find.byKey(const Key('boton-iniciar-sesion')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hola, Salome'), findsOneWidget);
+
+    await tester.tap(find.text('Finca La Esperanza'));
+    await tester.pumpAndSettle();
+    expect(find.text('Vereda El Retiro · 3.2 km'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Volver'));
+    await tester.pumpAndSettle();
+    expect(find.text('Hola, Salome'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(PantallaInicioSesion), findsOneWidget);
+  });
+
+  testWidgets('Login no bloquea el avance con campos vacíos', (tester) async {
+    await tester.pumpWidget(const app.MercadoApp());
+
+    await tester.tap(find.byKey(const Key('boton-iniciar-sesion')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hola, visitante'), findsOneWidget);
+    expect(find.text('Productores cercanos'), findsOneWidget);
+  });
+
   testWidgets('El diseño conserva ancho móvil en pantalla grande y pequeña', (
     tester,
   ) async {
@@ -30,11 +76,13 @@ void main() {
     );
   });
 
-  testWidgets('La app abre Inicio y permite abrir y cerrar el detalle', (
+  testWidgets('La app abre el detalle desde Inicio y puede regresar', (
     tester,
   ) async {
     await tester.pumpWidget(const app.MercadoApp());
 
+    await tester.tap(find.byKey(const Key('boton-iniciar-sesion')));
+    await tester.pumpAndSettle();
     expect(find.text('Productores cercanos'), findsOneWidget);
 
     await tester.tap(find.text('Finca La Esperanza'));

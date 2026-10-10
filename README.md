@@ -41,6 +41,7 @@ Las búsquedas, filtros, favoritos, cantidades y el resumen del carrito son acci
 - Inicio permite buscar por nombre o vereda y filtrar por categoría. Estos controles solo cambian la lista visible.
 - `StatefulWidget` y `setState` mantienen actualizados el texto buscado, el filtro, el favorito, las cantidades y la visibilidad del resumen dentro de la misma pantalla.
 - El correo se envía desde Inicio de sesión a Inicio para mostrar un saludo personalizado.
+- Inicio de sesión incluye correo y contraseña; según las instrucciones de la actividad, no valida los campos ni consulta un servicio. Al tocar "Iniciar sesión", apila Inicio y envía el correo escrito.
 - La tarjeta seleccionada envía el productor completo a Detalle de productor, para mostrar sus datos y sus cuatro productos sin volver a buscarlo.
 - Detalle permite marcar el productor como favorito y agregar o quitar unidades de cada producto.
 - Las pantallas secundarias regresan con `Navigator.pop`; así se conserva la pila y el botón Atrás del sistema tiene el mismo resultado.
@@ -48,6 +49,7 @@ Las búsquedas, filtros, favoritos, cantidades y el resumen del carrito son acci
 - La interfaz usa todo el ancho disponible en teléfonos y limita el contenido a 420 píxeles en ventanas más anchas para conservar una presentación móvil durante las pruebas en navegador.
 - Los datos serán fijos en el código. No se usarán API, base de datos ni validación de campos en esta actividad.
 - La navegación usa `Navigator.push`, `MaterialPageRoute`, datos por constructor y `Navigator.pop`, que son los patrones de navegación explicados en la guía. No se agregaron rutas con nombre, argumentos de ruta ni navegación anidada.
+- La pantalla inicial de la aplicación es Inicio de sesión. Al regresar desde Inicio con Atrás, `Navigator.pop` retira Inicio y vuelve a mostrar el login que quedó debajo en la pila.
 
 ## Cambios respecto al diseño
 
@@ -58,7 +60,8 @@ Las búsquedas, filtros, favoritos, cantidades y el resumen del carrito son acci
 
 - Se consultaron las instrucciones de la actividad y se usó Copilot (asistente de IA) para redactar este diseño y apoyar la implementación. El equipo revisará y explicará cada decisión y cada parte del código.
 
-## Integrantes y pantallas
+## Pantallas a cargo de este integrante
 
-- Este integrante: Inicio y Detalle de productor.
-- Compañera: Inicio de sesión.
+- Inicio de sesión.
+- Inicio.
+- Detalle de productor.
